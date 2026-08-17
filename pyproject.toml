@@ -1,7 +1,7 @@
 [project]
 name = "dataparity"
 version = "0.1.0"
-description = "Add your description here"
+description = "Local-first structured data quality and change analysis platform"
 readme = "README.md"
 authors = [
     { name = "Shekhar Ramola", email = "shekharramola2012@gmail.com" }
