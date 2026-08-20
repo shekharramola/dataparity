@@ -1,9 +1,10 @@
 from uuid import uuid4
 
-from dataparity.domain.dataset_version import ( 
+from dataparity.domain.dataset_version import (
     DatasetVersion,
     DatasetVersionStatus,
 )
+
 
 def test_pending_version_can_be_approved():
     version = DatasetVersion(
@@ -18,6 +19,7 @@ def test_pending_version_can_be_approved():
     assert approved.status == DatasetVersionStatus.APPROVED
     assert approved.id == version.id
     assert approved.dataset_id == version.dataset_id
+
 
 def test_pending_version_can_be_rejected_with_reason():
     version = DatasetVersion(
@@ -34,6 +36,7 @@ def test_pending_version_can_be_rejected_with_reason():
     assert rejected.id == version.id
     assert rejected.dataset_id == version.dataset_id
 
+
 def test_approved_version_cannot_be_approved_again():
     version = DatasetVersion(
         id=uuid4(),
@@ -47,6 +50,7 @@ def test_approved_version_cannot_be_approved_again():
         assert str(error) == "Only pending versions can be approved"
     else:
         raise AssertionError("Expected ValueError")
+
 
 def test_rejection_requires_a_reason():
     version = DatasetVersion(
