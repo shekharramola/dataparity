@@ -65,3 +65,18 @@ def test_rejection_requires_a_reason():
         assert str(error) == "Rejection reason is required"
     else:
         raise AssertionError("Expected ValueError")
+
+
+def test_rejected_version_preserves_rejection_reason():
+    version = DatasetVersion(
+        id=uuid4(),
+        dataset_id=uuid4(),
+        status=DatasetVersionStatus.PENDING_REVIEW,
+    )
+
+    reason = "Supplier submitted an invalid dataset"
+
+    rejected = version.reject(reason)
+
+    assert rejected.status == DatasetVersionStatus.REJECTED
+    assert rejected.rejection_reason == reason
