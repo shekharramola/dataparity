@@ -2,6 +2,8 @@ from dataclasses import dataclass
 from enum import StrEnum
 from uuid import UUID
 
+from dataparity.domain.column import Column
+
 
 class DatasetVersionStatus(StrEnum):
     PENDING_REVIEW = "pending_review"
@@ -14,6 +16,7 @@ class DatasetVersion:
     id: UUID
     dataset_id: UUID
     status: DatasetVersionStatus
+    columns: tuple[Column, ...] = ()
     rejection_reason: str | None = None
 
     def approve(self) -> "DatasetVersion":
@@ -24,6 +27,7 @@ class DatasetVersion:
             id=self.id,
             dataset_id=self.dataset_id,
             status=DatasetVersionStatus.APPROVED,
+            columns=self.columns,
             rejection_reason=None,
         )
 
@@ -38,5 +42,6 @@ class DatasetVersion:
             id=self.id,
             dataset_id=self.dataset_id,
             status=DatasetVersionStatus.REJECTED,
+            columns=self.columns,
             rejection_reason=reason,
         )

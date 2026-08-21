@@ -1,5 +1,6 @@
 from uuid import uuid4
 
+from dataparity.domain.column import Column, DataType
 from dataparity.domain.dataset_version import (
     DatasetVersion,
     DatasetVersionStatus,
@@ -80,3 +81,28 @@ def test_rejected_version_preserves_rejection_reason():
 
     assert rejected.status == DatasetVersionStatus.REJECTED
     assert rejected.rejection_reason == reason
+
+
+def test_approved_version_preserves_columns():
+    columns = (
+        Column(
+            name="supplier_id",
+            data_type=DataType.INTEGER,
+            nullable=False,
+        ),
+        Column(
+            name="supplier_name",
+            data_type=DataType.STRING,
+            nullable=False,
+        ),
+    )
+    version = DatasetVersion(
+        id=uuid4(),
+        dataset_id=uuid4(),
+        status=DatasetVersionStatus.PENDING_REVIEW,
+        columns=columns,
+    )
+
+    approved = version.approve()
+
+    assert approved.columns == columns
