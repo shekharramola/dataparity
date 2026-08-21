@@ -53,3 +53,28 @@ def test_version_from_another_dataset_cannot_be_set_as_active_baseline():
 
     with pytest.raises(ValueError, match="Version does not belong to this dataset"):
         dataset.set_active_baseline(version)
+
+
+def test_approved_version_can_replace_current_active_baseline():
+    dataset = Dataset(
+        id=uuid4(),
+        name="Supplier master data",
+    )
+
+    first_version = DatasetVersion(
+        id=uuid4(),
+        dataset_id=dataset.id,
+        status=DatasetVersionStatus.APPROVED,
+    )
+
+    second_version = DatasetVersion(
+        id=uuid4(),
+        dataset_id=dataset.id,
+        status=DatasetVersionStatus.APPROVED,
+    )
+
+    dataset_with_first_baseline = dataset.set_active_baseline(first_version)
+    updated_dataset = dataset_with_first_baseline.set_active_baseline(second_version)
+
+    assert dataset_with_first_baseline.active_baseline_version_id == first_version.id
+    assert updated_dataset.active_baseline_version_id == second_version.id
