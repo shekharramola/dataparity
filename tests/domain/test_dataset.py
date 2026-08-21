@@ -78,3 +78,30 @@ def test_approved_version_can_replace_current_active_baseline():
 
     assert dataset_with_first_baseline.active_baseline_version_id == first_version.id
     assert updated_dataset.active_baseline_version_id == second_version.id
+
+
+def test_approving_a_new_version_does_not_change_current_active_baseline():
+    dataset = Dataset(
+        id=uuid4(),
+        name="Supplier master data",
+    )
+
+    first_version = DatasetVersion(
+        id=uuid4(),
+        dataset_id=dataset.id,
+        status=DatasetVersionStatus.APPROVED,
+    )
+
+    dataset_with_baseline = dataset.set_active_baseline(first_version)
+
+    pending_version = DatasetVersion(
+        id=uuid4(),
+        dataset_id=dataset.id,
+        status=DatasetVersionStatus.PENDING_REVIEW,
+    )
+
+    approved_version = pending_version.approve()
+
+    assert dataset_with_baseline.active_baseline_version_id == first_version.id
+    assert approved_version.status == DatasetVersionStatus.APPROVED
+    assert approved_version.id != dataset_with_baseline.active_baseline_version_id
